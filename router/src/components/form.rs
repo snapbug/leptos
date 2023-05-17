@@ -559,12 +559,12 @@ where
     Self: Sized + serde::de::DeserializeOwned,
 {
     /// Tries to deserialize the data, given only the `submit` event.
-    fn from_event(ev: &web_sys::Event) -> Result<Self, serde_html_form::Error>;
+    fn from_event(ev: &web_sys::Event) -> Result<Self, serde_html_form::de::Error>;
 
     /// Tries to deserialize the data, given the actual form data.
     fn from_form_data(
         form_data: &web_sys::FormData,
-    ) -> Result<Self, serde_html_form::Error>;
+    ) -> Result<Self, serde_html_form::de::Error>;
 }
 
 impl<T> FromFormData for T
@@ -575,7 +575,7 @@ where
         any(debug_assertions, feature = "ssr"),
         tracing::instrument(level = "trace", skip_all,)
     )]
-    fn from_event(ev: &web_sys::Event) -> Result<Self, serde_html_form::Error> {
+    fn from_event(ev: &web_sys::Event) -> Result<Self, serde_html_form::de::Error> {
         let (form, _, _, _) = extract_form_attributes(ev);
 
         let form_data = web_sys::FormData::new_with_form(&form).unwrap_throw();
@@ -588,7 +588,7 @@ where
     )]
     fn from_form_data(
         form_data: &web_sys::FormData,
-    ) -> Result<Self, serde_html_form::Error> {
+    ) -> Result<Self, serde_html_form::de::Error> {
         let data =
             web_sys::UrlSearchParams::new_with_str_sequence_sequence(form_data)
                 .unwrap_throw();
